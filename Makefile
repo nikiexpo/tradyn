@@ -1,13 +1,11 @@
 
 EXE = main
 
-OBJS = main.o \  
-	gradientFD.o \ 	
-	UserDefinedFunctions.o
+OBJS = main.o gradientFD.o UserDefinedFunctions.o
 
 CXX = g++
 
-CXXFLAGS = -std==c++11
+CXXFLAGS = -std=c++11
 
 all: $(EXE)
 

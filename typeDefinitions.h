@@ -8,20 +8,23 @@ Motivation: To consolidate all the type definitions into one file
 
 #include <vector>
 
-// SHOULD THE PRECISION BE DOUBLE INSTEAD OF FLOAT??
+// SHOULD THE PRECISION BE DOUBLE INSTEAD OF FLOAT?? --- YES ! IPOPT uses double as default
 
 typedef const unsigned int Index;
-typedef std::vector<float> Gradient;
-typedef const float Perturbation; 
-typedef std::vector<float> States;
-typedef std::vector<float> Inputs;
-typedef const float Time;
-typedef float Cost;
+typedef std::vector<double> Gradient;
+typedef const double Perturbation; 
+typedef std::vector<double> States;
+typedef std::vector<std::vector<double>> StateVectors;
+typedef std::vector<double> Inputs;
+typedef std::vector<std::vector<double>> InputVectors;
+typedef double Time;
+typedef std::vector<double> TimeVector;
+typedef double Cost;
 
 typedef struct TripletSparsityFormat {
     std::vector<unsigned int> rows;
     std::vector<unsigned int> cols;
-    std::vector<float> values;
+    std::vector<double> values;
 }SparseMatrix;
 
 typedef std::vector<unsigned int> PerturbationSelectionVector;
@@ -45,7 +48,7 @@ where i, j, k etc are the idices to choose the value to perturb for x_0, x_f, u_
 // typedef struct Gradient
 // {
 //     Index n;
-//     std::vector<float> grad_f;
+//     std::vector<double> grad_f;
 // }Gradient;
 
 #endif

@@ -7,7 +7,7 @@ typedef float Perturbation;
 void vectOpt(std::vector<float>* ex, const float e);
 float func(std::vector<float> x, std::vector<float> u);
 void finiteDiff(const std::vector<float> x, int idx, std::vector<float> u, float e, std::vector<float>& grad);
-
+const float acc(int count);
 
 int main(void){
     std::vector<float> ex = {1,0,0,0,0};
@@ -28,6 +28,10 @@ int main(void){
 
     std::cout << "\n" << grad[0] << ", " << grad[1] << std::endl;
     std::cout << t + ee << std::endl;
+
+    std::vector<std::vector<float>> testVec = {{1,0,0}, {2,0,0}};
+    std::cout << testVec.size() << "," << testVec[1].size() << std::endl;
+    std::cout << acc(10) << std::endl;
 
     return 0;
 }
@@ -60,4 +64,14 @@ void finiteDiff(const std::vector<float> x, int idx, std::vector<float> u, float
 
     grad[0] = f_x;
     grad[1] = f_u;
+}
+
+const float acc(int count){
+    float L = 1.5;
+    for (int i = 0; i < count; i++)
+    {
+        L += 1;
+    }
+
+    return (const float) L;
 }

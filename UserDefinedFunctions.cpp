@@ -6,10 +6,25 @@ interface
 */
 
 #include "UserDefinedFunctions.h"
+#include <cassert>
 
 const Cost E_unscaled (const States x0, const States xf, const Inputs u0, const Inputs uf,
     const Time t0, const Time tf
 ){
     const Cost E = xf[0]*uf[0]*tf; //dummy function xf(1)*uf(1)
     return E;
+}
+
+
+const Cost L_unscaled (const StateVectors X, const InputVectors U, const TimeVector T){
+    assert(X.size() == T.size());
+    assert(U.size() == T.size());
+
+    Cost L = 0.0;
+    for (int i = 0; i < T.size(); i++)
+    {
+        L += X[i][0] * U[i][0];
+    }
+    
+    return (const Cost) L;
 }
