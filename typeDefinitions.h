@@ -9,12 +9,14 @@ Motivation: To consolidate all the type definitions into one file
 #include <vector>
 
 // SHOULD THE PRECISION BE DOUBLE INSTEAD OF FLOAT?? --- YES ! IPOPT uses double as default
+// https://stackoverflow.com/questions/57542919/how-to-reserve-a-multi-dimensional-vector-without-increasing-the-vector-size (IMP READ)
 
 typedef const unsigned int Index;
 typedef std::vector<double> Gradient;
 typedef const double Perturbation; 
 typedef std::vector<double> States;
 typedef std::vector<std::vector<double>> StateVectors;
+typedef std::vector<double> StateGradientVectors;
 typedef std::vector<double> Inputs;
 typedef std::vector<std::vector<double>> InputVectors;
 typedef double Time;

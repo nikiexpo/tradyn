@@ -11,7 +11,7 @@ interface
 const Cost E_unscaled (const States x0, const States xf, const Inputs u0, const Inputs uf,
     const Time t0, const Time tf
 ){
-    const Cost E = xf[0]*uf[0]*tf; //dummy function xf(1)*uf(1)
+    const Cost E = tf; //dummy function xf(1)*uf(1)
     return E;
 }
 
@@ -23,8 +23,23 @@ const Cost L_unscaled (const StateVectors X, const InputVectors U, const TimeVec
     Cost L = 0.0;
     for (int i = 0; i < T.size(); i++)
     {
-        L += X[i][0] * U[i][0];
+        L += 0;
     }
     
     return (const Cost) L;
+}
+
+const StateGradientVectors f_unscaled (const StateVectors X, const InputVectors U, const TimeVector T){
+
+    StateGradientVectors dx;
+    dx.reserve(T.size() * X[0].size());
+
+    //Bang Bang internal dynamics
+    for (int i = 0; i < T.size(); i++)
+    {
+        dx[i] = X[i][1]; // dx1 = x2;
+        dx[1*T.size() + i] = U[i][0]; // dx2 = u1
+    }
+    
+    return (const StateGradientVectors) dx;
 }

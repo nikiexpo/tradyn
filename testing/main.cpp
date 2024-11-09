@@ -33,6 +33,18 @@ int main(void){
     std::cout << testVec.size() << "," << testVec[1].size() << std::endl;
     std::cout << acc(10) << std::endl;
 
+    int indx= 0;
+    for (int  i = 0; i < 99; i++)
+    {
+        for (int j = 0; j < 4; j++)
+        {
+            indx = i*4 + j;
+        }
+        
+    }
+
+    std::cout << "\n INDEX ::: " << indx << std::endl;
+
     return 0;
 }
 
