@@ -7,7 +7,7 @@ Motivating: To compute the jacobian of OCP problem*/
 #include "typeDefinitions.h"
 #include "UserDefinedFunctions.h"
 
-SparseMatrix jacobianF(StateVectors X, InputVectors U, TimeVector T);
+SparseMatrix jacobianF(StateVectors X, InputVectors U, TimeVector T, Time t0, Time tf, Perturbation e);
 
 const Gradient finiteDiff_jacF(
     const StateVectors pp_X, const InputVectors pp_U,

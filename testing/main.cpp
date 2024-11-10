@@ -45,6 +45,27 @@ int main(void){
 
     std::cout << "\n INDEX ::: " << indx << std::endl;
 
+    std::vector<float> t1 = {1,0,0,0};
+    std::vector<float> t2 = {1,0,0,0};
+    std::vector<float> tt;
+    
+    for (auto &&i : t1)
+    {
+        tt.push_back(i);
+    }
+    for (auto &&i : t2)
+    {
+        tt.push_back(i);
+    }
+    for (auto &&i : tt)
+    {
+        std::cout<<i << "," ;
+    }
+    std::cout << "\n" << std::endl;
+    
+    
+    
+
     return 0;
 }
 

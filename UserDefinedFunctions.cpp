@@ -7,6 +7,7 @@ interface
 
 #include "UserDefinedFunctions.h"
 #include <cassert>
+#include <iostream>
 
 const Cost E_unscaled (const States x0, const States xf, const Inputs u0, const Inputs uf,
     const Time t0, const Time tf
@@ -35,11 +36,18 @@ const StateGradientVectors f_unscaled (const StateVectors X, const InputVectors 
     dx.reserve(T.size() * X[0].size());
 
     //Bang Bang internal dynamics
+    
+
+    for (int  i = 0; i < T.size(); i++)
+    {
+        dx.push_back(X[i][1]); // dx1 = x2;
+    }
     for (int i = 0; i < T.size(); i++)
     {
-        dx[i] = X[i][1]; // dx1 = x2;
-        dx[1*T.size() + i] = U[i][0]; // dx2 = u1
+        dx.push_back(U[i][0]); // dx2 = u1
     }
     
+    //std::cout << dx.size() << std::endl;
+    assert(dx.size() == T.size()*X[0].size());
     return (const StateGradientVectors) dx;
 }
