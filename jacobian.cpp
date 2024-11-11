@@ -105,10 +105,10 @@ SparseMatrix jacobianF(StateVectors X, InputVectors U, TimeVector T, Time t0, Ti
     }
     
     // printing the jacobian to debug (i know the sizes for now!!! 2 states and 1 input)
-    std::cout << "Jacobian Size: "<< jacDynamics_t0.size() << ", " << jacDynamics_tf.size() << ", " << jacDynamics_X.size() << "," << jacDynamics_X.size() << ", " << jacDynamics_U.size() << std::endl; 
+    // std::cout << "Jacobian Size: "<< jacDynamics_t0.size() << ", " << jacDynamics_tf.size() << ", " << jacDynamics_X.size() << ", " << jacDynamics_U.size() << std::endl; 
 
-    std::cout << "\n Jacobian: \n" << std::endl;
-    for (int i = 0; i < T.size(); i++)
+    std::cout << "\nDynamics part of the Jacobian Jfi : \n" << std::endl;
+    for (int i = 0; i < T.size()*X[0].size(); i++)
     {
         std::cout << jacDynamics_t0[i] << ",\t" << jacDynamics_tf[i] << ",\t" << jacDynamics_X[i] << ",\t" << jacDynamics_X[1*T.size() + i] << ",\t" << jacDynamics_U[i] << std::endl; 
     }
