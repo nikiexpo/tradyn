@@ -41,11 +41,13 @@ const StateGradientVectors f_unscaled (const StateVectors X, const InputVectors 
     for (int  i = 0; i < T.size(); i++)
     {
         dx.push_back(X[i][1]); // dx1 = x2;
+        // std::cout << " LOG  CHECK !: "<< i << std::endl;
     }
     for (int i = 0; i < T.size(); i++)
     {
         dx.push_back(U[i][0]); // dx2 = u1
     }
+    
     
     //std::cout << dx.size() << std::endl;
     assert(dx.size() == T.size()*X[0].size());

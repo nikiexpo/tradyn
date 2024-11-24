@@ -131,6 +131,7 @@ const Gradient finiteDiff_jacF(
 
     // std::cout << "\nlog check jacF: " << pp_T.size() << ", " << pp_X[0].size() << ", " << pp_X.size() << ", " << pp_U[0].size() << ", " << pp_U.size() << ", " << pp_dx.size() << std::endl;
     // std::cout << "dx"
+    std::cout << " LOG  CHECK !" << std::endl;
 
     for (int  i = 0; i < pp_T.size(); i++)
     {

@@ -1,6 +1,2 @@
-main.o: main.cpp
-	g++ main.cpp -o $@
-
-
-clean:
-	rm -f $(wildcard *.o)
+default:
+	g++ -o test test_main.cpp ../jacobian.cpp ../UserDefinedFunctions.cpp  
