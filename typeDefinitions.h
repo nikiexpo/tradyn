@@ -22,6 +22,7 @@ typedef std::vector<std::vector<double>> InputVectors;
 typedef double Time;
 typedef std::vector<double> TimeVector;
 typedef double Cost;
+typedef std::vector<double> CostVector;
 
 typedef struct TripletSparsityFormat {
     std::vector<unsigned int> rows;

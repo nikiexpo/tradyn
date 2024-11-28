@@ -108,12 +108,12 @@ const double finiteDiff_E(
 }
 
 
-Gradient gradientFD_L(
+std::vector<CostVector> gradientFD_L(
     StateVectors X, InputVectors U,
     Time t0, Time tf, TimeVector T,
     Perturbation e
 ){
-    Gradient dJL;
+    std::vector<CostVector> dJL;
 
     // dJL_t0;
     Time pp_deltaT_t0 = tf - (t0 - e); // deltaT increases with decrease in t0
@@ -198,13 +198,21 @@ Gradient gradientFD_L(
      
 } 
 
-const double finiteDiff_L(
+const CostVector finiteDiff_L(
     const StateVectors pp_X, const InputVectors pp_U,
     const StateVectors np_X, const InputVectors np_U,
     const Time pp_delta_T, const Time np_delta_T,
     const TimeVector pp_T, const TimeVector np_T, Perturbation e
 ){
-    const Cost postive_perturbed_value = L_unscaled(pp_X, pp_U, pp_T);
-    const Cost negative_perturbed_value = L_unscaled(np_X, np_U, np_T);
-    return (const double) ((pp_delta_T)*postive_perturbed_value - (np_delta_T)*negative_perturbed_value) / (2.0*e); 
+    const CostVector postive_perturbed_value = L_unscaled(pp_X, pp_U, pp_T);
+    const CostVector negative_perturbed_value = L_unscaled(np_X, np_U, np_T);
+
+    CostVector FD_L;
+    for (int i = 0; i < pp_T.size(); i++)
+    {
+        FD_L.push_back(((pp_delta_T)*postive_perturbed_value[i] - (np_delta_T)*negative_perturbed_value[i]) / (2.0*e));
+    }
+    
+
+    return FD_L; 
 }

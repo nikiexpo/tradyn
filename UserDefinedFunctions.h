@@ -14,7 +14,7 @@ const Cost E_unscaled (const States x0, const States xf, const Inputs u0, const 
     const Time t0, const Time tf
 );
 
-const Cost L_unscaled (const StateVectors X, const InputVectors U, const TimeVector T);
+const CostVector L_unscaled (const StateVectors X, const InputVectors U, const TimeVector T);
 
 const StateGradientVectors f_unscaled(const StateVectors X, const InputVectors U, const TimeVector T);
 #endif

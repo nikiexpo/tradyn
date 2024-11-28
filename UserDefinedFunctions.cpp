@@ -17,17 +17,17 @@ const Cost E_unscaled (const States x0, const States xf, const Inputs u0, const 
 }
 
 
-const Cost L_unscaled (const StateVectors X, const InputVectors U, const TimeVector T){
+const CostVector L_unscaled (const StateVectors X, const InputVectors U, const TimeVector T){
     assert(X.size() == T.size());
     assert(U.size() == T.size());
 
-    Cost L = 0.0;
+    CostVector L;
     for (int i = 0; i < T.size(); i++)
     {
-        L += 0;
+        L.push_back(0);
     }
     
-    return (const Cost) L;
+    return L;
 }
 
 const StateGradientVectors f_unscaled (const StateVectors X, const InputVectors U, const TimeVector T){

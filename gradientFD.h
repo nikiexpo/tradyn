@@ -8,7 +8,7 @@ Motivation: To compute the cost gradient of dynamic optimizaion problems using f
 #include "typeDefinitions.h"
 #include <cassert>
 
-Gradient gradientFD_L(
+std::vector<CostVector> gradientFD_L(
     StateVectors X, InputVectors U,
     Time t0, Time tf, TimeVector T,
     Perturbation e
@@ -29,7 +29,7 @@ const double finiteDiff_E(
     const Time np_t0, const Time np_tf, Perturbation e
 );
 
-const double finiteDiff_L(
+const CostVector finiteDiff_L(
     const StateVectors pp_X, const InputVectors pp_U,
     const StateVectors np_X, const InputVectors np_U,
     const Time pp_delta_T, const Time np_delta_T,

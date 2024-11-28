@@ -44,12 +44,17 @@ int main(void){
 
     TimeVector T = {0.0, 0.250, 0.50, 0.750, 1.0};
 
-    Gradient dJL = gradientFD_L(X, U, t0, tf, T, 0.001);
+    std::vector<CostVector> dJL = gradientFD_L(X, U, t0, tf, T, 0.001);
     for (auto &&i : dJL)
     {
-        std::cout << i << ",";
+        for (auto &&j : i)
+        {
+            std::cout << j << ",";
+        }
+        
+        std::cout << "\n";
     }
-    std::cout << "\n";
+
 
     SparseMatrix test = jacobianF(X,U,T,t0,tf,0.001);
 
