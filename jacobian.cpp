@@ -4,7 +4,7 @@
 #include <iostream>
 
 
-SparseMatrix jacobianF(StateVectors X, InputVectors U, TimeVector T, Time t0, Time tf, Perturbation e){
+SparseMatrix jacobianF(StateVectors X, InputVectors U, TimeVector T, Time t0, Time tf, Perturbation e, bool constraints){
     SparseMatrix jacobian;
 
     // d(dx/dt)_t0;
@@ -38,6 +38,16 @@ SparseMatrix jacobianF(StateVectors X, InputVectors U, TimeVector T, Time t0, Ti
 
     const Gradient jacDynamics_t0 = finiteDiff_jacF(X, U, X, U, pp_deltaT_t0, np_deltaT_t0, pp_T_t0, np_T_t0, e);
     const Gradient jacDynamics_tf = finiteDiff_jacF(X, U, X, U, pp_deltaT_tf, np_deltaT_tf, pp_T_tf, np_T_tf, e);
+
+    Gradient jacConstraints_t0;
+    Gradient jacConstraints_tf;
+
+    if (constraints == true)
+    {
+        jacConstraints_t0 = finiteDiff_jacG(X, U, X, U, pp_deltaT_t0, np_deltaT_t0, pp_T_t0, np_T_t0, e);
+        jacConstraints_tf = finiteDiff_jacG(X, U, X, U, pp_deltaT_tf, np_deltaT_tf, pp_T_tf, np_T_tf, e);
+    }
+    
     
     // std::cout << "\nlog check" << std::endl;
 
@@ -49,6 +59,7 @@ SparseMatrix jacobianF(StateVectors X, InputVectors U, TimeVector T, Time t0, Ti
     StateVectors np_X = X;
 
     Gradient jacDynamics_X; 
+    Gradient jacConstraints_X;
     // jacDynamics_X.reserve(X[0].size()*X.size()); // change later
     // std::cout << "\nlog check" << std::endl;
     for (int i = 0; i < X[0].size(); i++)
@@ -66,6 +77,13 @@ SparseMatrix jacobianF(StateVectors X, InputVectors U, TimeVector T, Time t0, Ti
             jacDynamics_X.push_back(i);
             // std::cout << i << std::endl;
         }
+
+        Gradient temp2 = finiteDiff_jacG(pp_X, U, np_X, U, deltaT, deltaT, T, T, e);
+        for (auto &&i : temp2)
+        {
+            jacConstraints_X.push_back(i);
+            // std::cout << i << std::endl;
+        }
         
 
         for (int j = 0; j < X.size(); j++)
@@ -80,6 +98,7 @@ SparseMatrix jacobianF(StateVectors X, InputVectors U, TimeVector T, Time t0, Ti
     InputVectors np_U = U;
 
     Gradient jacDynamics_U;
+    Gradient jacConstraints_U;
 
     for (int i = 0; i < U[0].size(); i++)
     {
@@ -90,10 +109,16 @@ SparseMatrix jacobianF(StateVectors X, InputVectors U, TimeVector T, Time t0, Ti
         }
 
         Gradient temp = finiteDiff_jacF(X, pp_U, X, np_U, deltaT, deltaT, T, T, e);
-        std::cout << "Size of temp U : " << temp.size() << std::endl;
+        // std::cout << "Size of temp U : " << temp.size() << std::endl;
         for (auto &&i : temp)
         {
             jacDynamics_U.push_back(i);
+        }
+
+        Gradient temp2 = finiteDiff_jacG(X, pp_U, X, np_U, deltaT, deltaT, T, T, e);
+        for (auto &&i : temp2)
+        {
+            jacConstraints_U.push_back(i);
         }
 
         for (int j = 0; j < U.size(); j++)
@@ -113,8 +138,12 @@ SparseMatrix jacobianF(StateVectors X, InputVectors U, TimeVector T, Time t0, Ti
         std::cout << jacDynamics_t0[i] << ",\t" << jacDynamics_tf[i] << ",\t" << jacDynamics_X[i] << ",\t" << jacDynamics_X[1*T.size() + i] << ",\t" << jacDynamics_U[i] << std::endl; 
     }
     std::cout << "\n" << std::endl;
-    
-
+    std::cout << "\nConstraints part of the Jacobian : \n" << std::endl;
+    for (int i = 0; i < T.size()*((int) jacConstraints_t0.size() / T.size()); i++)
+    {
+        std::cout << jacConstraints_t0[i] << ",\t" << jacConstraints_tf[i] << ",\t" << jacConstraints_X[i] << ",\t" << jacConstraints_U[i] << std::endl; 
+    }
+    std::cout << "\n" << std::endl;
     return jacobian;
 }
 
@@ -144,4 +173,27 @@ const Gradient finiteDiff_jacF(
 
 
     return (const Gradient) jacF;
+}
+
+const Gradient finiteDiff_jacG(
+    const StateVectors pp_X, const InputVectors pp_U,
+    const StateVectors np_X, const InputVectors np_U,
+    const Time pp_delta_T, const Time np_delta_T,
+    const TimeVector pp_T, const TimeVector np_T, Perturbation e
+){
+    const ConstraintVector pp_g = g_unscaled(pp_X, pp_U, pp_T);
+    const ConstraintVector np_g = g_unscaled(np_X, np_U, np_T);
+    ConstraintVector jacG;
+    // std::cout << "\nlog check" << std::endl;
+    for (int i = 0; i < pp_T.size(); i++)
+    {
+        for (int j = 0; j < ((int) pp_g.size() / pp_T.size()); j++)
+        {
+            jacG.push_back((pp_g[j*pp_T.size() + i] - np_g[j*pp_T.size() + i])/(2*e)); // reshuffled just like jacF
+        }
+        
+    }
+    
+
+    return (const Gradient) jacG;
 }

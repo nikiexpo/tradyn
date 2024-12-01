@@ -53,3 +53,13 @@ const StateGradientVectors f_unscaled (const StateVectors X, const InputVectors 
     assert(dx.size() == T.size()*X[0].size());
     return (const StateGradientVectors) dx;
 }
+
+const ConstraintVector g_unscaled(const StateVectors X, const InputVectors U, const TimeVector T){
+    ConstraintVector g;
+    for (int i = 0; i < T.size(); i++)
+    {
+        g.push_back(3*X[i][0] - 1);
+    }
+
+    return g;
+}

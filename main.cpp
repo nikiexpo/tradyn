@@ -56,7 +56,7 @@ int main(void){
     }
 
 
-    SparseMatrix test = jacobianF(X,U,T,t0,tf,0.001);
+    SparseMatrix test = jacobianF(X,U,T,t0,tf,0.001, true);
 
     return 0;
 }
