@@ -1,8 +1,8 @@
 #include <vector>
 #include <iostream>
+#include "../typeDefinitions.h"
 
-typedef const float Time;
-typedef float Perturbation;
+
 
 void vectOpt(std::vector<float>* ex, const float e);
 float func(std::vector<float> x, std::vector<float> u);
@@ -10,6 +10,16 @@ void finiteDiff(const std::vector<float> x, int idx, std::vector<float> u, float
 const float acc(int count);
 
 int main(void){
+    FlatMatrix V;
+    V.vals = {1,0,0,0};
+    V = V + 1.0;
+    FlatMatrix nV = V + 1.0;
+    for (auto &&i : nV.vals)
+    {
+        std::cout << i << ",";
+    }
+    std::cout<<"\n";
+    
     std::vector<float> ex = {1,0,0,0,0};
     float e = 4.0;
     Perturbation ee = 0.4;

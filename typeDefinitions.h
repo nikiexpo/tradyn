@@ -11,25 +11,38 @@ Motivation: To consolidate all the type definitions into one file
 // SHOULD THE PRECISION BE DOUBLE INSTEAD OF FLOAT?? --- YES ! IPOPT uses double as default
 // https://stackoverflow.com/questions/57542919/how-to-reserve-a-multi-dimensional-vector-without-increasing-the-vector-size (IMP READ)
 
+#define FLOAT_PRECISION double
+
 typedef const unsigned int Index;
-typedef std::vector<double> Gradient;
-typedef const double Perturbation; 
-typedef std::vector<double> States;
-typedef std::vector<std::vector<double>> StateVectors;
-typedef std::vector<double> StateGradientVectors;
-typedef std::vector<double> Inputs;
-typedef std::vector<std::vector<double>> InputVectors;
-typedef double Time;
-typedef std::vector<double> TimeVector;
-typedef double Cost;
-typedef std::vector<double> CostVector;
-typedef std::vector<double> ConstraintVector;
+typedef std::vector<FLOAT_PRECISION> Gradient;
+typedef FLOAT_PRECISION Perturbation; 
+typedef std::vector<FLOAT_PRECISION> States;
+typedef std::vector<std::vector<FLOAT_PRECISION>> StateVectors;
+typedef std::vector<FLOAT_PRECISION> StateGradientVectors;
+typedef std::vector<FLOAT_PRECISION> Inputs;
+typedef std::vector<std::vector<FLOAT_PRECISION>> InputVectors;
+typedef FLOAT_PRECISION Time;
+typedef std::vector<FLOAT_PRECISION> TimeVector;
+typedef FLOAT_PRECISION Cost;
+typedef std::vector<FLOAT_PRECISION> CostVector;
+typedef std::vector<FLOAT_PRECISION> ConstraintVector;
 
 typedef struct TripletSparsityFormat {
     std::vector<unsigned int> rows;
     std::vector<unsigned int> cols;
-    std::vector<double> values;
+    std::vector<FLOAT_PRECISION> values;
 }SparseMatrix;
+
+typedef struct FlatMatrix {
+    std::vector<FLOAT_PRECISION> vals;
+    FlatMatrix& operator +(FLOAT_PRECISION x){
+        for (auto &&i : vals)
+        {
+            i += x;
+        }
+        return *this;
+    }
+}FlatMatrix;
 
 typedef std::vector<unsigned int> PerturbationSelectionVector;
 

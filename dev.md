@@ -11,3 +11,10 @@
     single precision ans - 0,3.99971,0,0,0,0,7.9999,0,0,0,0,0,7.9999,0
     double precision ans - 0,4,0,0,0,0,8,0,0,0,0,0,8,0
 - Done with cost grad calc of J_E and J_L but need to write verification code 
+
+## 06/12/2024
+- Need to refactor the code base so theres less boilerplate to write down the line. 
+    - Introduce Problem, Jacobian and Hessian classes to not have pass in a bunch of variables
+    - better way of perturbation
+- More robust type system, create custom type with operator overloading
+- Move to Cmake and add unit testing via Catch2

@@ -7,6 +7,8 @@ Motivation: To calculate the hessian of cost*/
 #include "typeDefinitions.h"
 #include "UserDefinedFunctions.h"
 
+// HESSISAN IS size of NZxNZ where NZ = nt + np + M*n + N*m 
+
 SparseMatrix hessian_wL(StateVectors X, InputVectors U, TimeVector T, Time t0, Time tf, Perturbation e);
 
 // use for double derivatie with respect to same variable
