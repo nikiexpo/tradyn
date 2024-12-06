@@ -30,3 +30,13 @@ const Gradient hessWL_CD_xx(
     }
     return hessWL_xx;
 }
+
+const Gradient hessWL_CD_xy(
+    const StateVectors pp_X, const InputVectors pp_U,
+    const StateVectors np_X, const InputVectors np_U,
+    const Time pp_delta_T, const Time np_delta_T,
+    const TimeVector pp_T, const TimeVector np_T, Perturbation e
+){
+    Gradient hessWL_xy; 
+    
+}
