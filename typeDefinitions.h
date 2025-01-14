@@ -7,6 +7,7 @@ Motivation: To consolidate all the type definitions into one file
 #define __TYPE_DEFINITIONS__
 
 #include <vector>
+#include <iostream>
 
 // SHOULD THE PRECISION BE DOUBLE INSTEAD OF FLOAT?? --- YES ! IPOPT uses double as default
 // https://stackoverflow.com/questions/57542919/how-to-reserve-a-multi-dimensional-vector-without-increasing-the-vector-size (IMP READ)
@@ -27,11 +28,78 @@ typedef FLOAT_PRECISION Cost;
 typedef std::vector<FLOAT_PRECISION> CostVector;
 typedef std::vector<FLOAT_PRECISION> ConstraintVector;
 
+// operator overloading on std::vector
+template <typename T>
+std::vector<T> operator+(std::vector<T> v, T val){
+    for (auto &&i : v)
+    {
+        i += val;
+    }
+    return v;
+}
+template <typename T>
+std::vector<T> operator+(std::vector<T> v1, std::vector<T> v2){
+    for (int i = 0; i < v1.size(); i++)
+    {
+        v1[i] = v1[i] + v2[i]; //collecting in v1 to avoid making another copy
+    }
+    
+    return v1;
+}
+template <typename T>
+std::vector<T> operator-(std::vector<T> v1, std::vector<T> v2){
+    for (int i = 0; i < v1.size(); i++)
+    {
+        v1[i] = v1[i] - v2[i]; //collecting in v1 to avoid making another copy
+    }
+    
+    return v1;
+}
+template <typename T>
+std::vector<T> operator*(std::vector<T> v, T val){
+    for (auto &&i : v)
+    {
+        i *= val;
+    }
+    return v;
+}
+template <typename T>
+std::vector<T> operator*(std::vector<T> v1, std::vector<T> v2){
+    for (int i = 0; i < v1.size(); i++)
+    {
+        v1[i] = v1[i] * v2[i]; //collecting in v1 to avoid making another copy
+    }
+    
+    return v1;
+}
+
+
+
 typedef struct TripletSparsityFormat {
     std::vector<unsigned int> rows;
     std::vector<unsigned int> cols;
     std::vector<FLOAT_PRECISION> values;
+
+    TripletSparsityFormat(const int size){
+        rows.resize(size);
+        cols.resize(size);
+        values.resize(size);
+    }
+    TripletSparsityFormat(void){} // does nothing
+    void printInfo(){
+        std::cout<< "Rows: " << rows.size() << " | Cols: " << cols.size() << std::endl;
+    }
+    void printFull(){
+        for (int k = 0; k < rows.size(); k++)
+        {
+            std::cout << "(" << rows[k] <<"," << cols[k] <<") = " << values[k] << std::endl;
+        }
+        
+    }
 }SparseMatrix;
+
+
+
 
 typedef struct FlatMatrix {
     std::vector<FLOAT_PRECISION> vals;
@@ -43,6 +111,8 @@ typedef struct FlatMatrix {
         return *this;
     }
 }FlatMatrix;
+
+
 
 typedef std::vector<unsigned int> PerturbationSelectionVector;
 

@@ -24,7 +24,7 @@ const CostVector L_unscaled (const StateVectors X, const InputVectors U, const T
     CostVector L;
     for (int i = 0; i < T.size(); i++)
     {
-        L.push_back(0);
+        L.push_back(X[i][0]);
     }
     
     return L;

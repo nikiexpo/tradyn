@@ -6,6 +6,7 @@ Motivation: To calculate the hessian of cost*/
 
 #include "typeDefinitions.h"
 #include "UserDefinedFunctions.h"
+#include "commonFuncs.h"
 
 // HESSISAN IS size of NZxNZ where NZ = nt + np + M*n + N*m 
 

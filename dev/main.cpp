@@ -74,8 +74,24 @@ int main(void){
     std::cout << "\n" << std::endl;
     
     
-    
+    std::vector<FLOAT_PRECISION> vv = {1,2,3,4,5};
+    std::vector<FLOAT_PRECISION> vv_new = vv*vv + vv;
 
+    for (auto &&i : vv_new)
+    {
+        std::cout << i << ", ";
+    }
+    std::cout << "\n" << std::endl;
+
+    for (auto &&i : vv)
+    {
+        std::cout << i << ", ";
+    }
+    std::cout << "\n" << std::endl;
+    
+    SparseMatrix test(5);
+    test.printInfo();
+    std::cout << vec_sum(vv) << std::endl;
     return 0;
 }
 
