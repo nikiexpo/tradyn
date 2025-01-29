@@ -1,13 +1,13 @@
-/*Created by Nikilesh Ramesh on 28/11/2024 at 14:57
+/*Created by Nikilesh Ramesh on 27/01/2025
 Motivation: To calculate the hessian of cost*/
 
-#include "hessian_wL.h"
+#include "hessian_FG.h"
 
-SparseMatrix hessian_wL(StateVectors X, InputVectors U, TimeVector T, Time t0, Time tf, Perturbation e){
+SparseMatrix hessian_FG(StateVectors X, InputVectors U, TimeVector T, Time t0, Time tf, Perturbation e, int numState){
 
     // Figure out the total size for perturbation vec
     int timeSize = T.size();
-    int stateNum = X[0].size();
+    int stateNum = numState; // for now, maybe change everything to numState
     int inputNum = U[0].size();
     int rowSize = 2 + stateNum + inputNum;
     int hessSize = 2 + stateNum*timeSize + inputNum*timeSize;
@@ -31,7 +31,7 @@ SparseMatrix hessian_wL(StateVectors X, InputVectors U, TimeVector T, Time t0, T
         for (int j = 0; j <= i; j++) 
         {
             pertub_vec_j[j] = e;
-            CostVector L_tt;
+            CostVector f_tt;
             if (i == j)
             {
                 
@@ -82,10 +82,11 @@ SparseMatrix hessian_wL(StateVectors X, InputVectors U, TimeVector T, Time t0, T
                     U_m[k] = U[k] - (inputPerturbVec_i);                   
                 }
 
-                CostVector L_o =  L_unscaled(X,U,T);
-                CostVector L_p = L_unscaled(X_p, U_p, T_p);
-                CostVector L_m = L_unscaled(X_m, U_m, T_m);
-                L_tt = (L_p + L_o*((FLOAT_PRECISION)-2.0) + L_m)*((FLOAT_PRECISION) e*e);
+                CostVector f_o =  f_unscaled(X,U,T, numState);
+                CostVector f_p = f_unscaled(X_p, U_p, T_p, numState);
+                CostVector f_m = f_unscaled(X_m, U_m, T_m, numState);
+                f_tt = (f_p + f_o*((FLOAT_PRECISION)-2.0) + f_m)*((FLOAT_PRECISION) e*e);
+
             } else {
                 // if i != j
                 // init 4 vectors to record the total perturbation for ++, +-, -+ and -- case
@@ -181,11 +182,11 @@ SparseMatrix hessian_wL(StateVectors X, InputVectors U, TimeVector T, Time t0, T
                 }
 
                 // finally, start evaluating the Lagrange
-                const CostVector L_pp = L_unscaled(X_pp, U_pp, T_pp)*dt_pp;
-                const CostVector L_pm = L_unscaled(X_pm, U_pm, T_pm)*dt_pm;
-                const CostVector L_mp = L_unscaled(X_mp, U_mp, T_mp)*dt_mp;
-                const CostVector L_mm = L_unscaled(X_mm, U_mm, T_mm)*dt_mm;
-                L_tt = ((L_pp - L_mp) + (L_mm - L_pm))*((FLOAT_PRECISION) 1/(4*e*e));
+                const CostVector f_pp = f_unscaled(X_pp, U_pp, T_pp, numState )*dt_pp;
+                const CostVector f_pm = f_unscaled(X_pm, U_pm, T_pm, numState)*dt_pm;
+                const CostVector f_mp = f_unscaled(X_mp, U_mp, T_mp, numState)*dt_mp;
+                const CostVector f_mm = f_unscaled(X_mm, U_mm, T_mm, numState)*dt_mm;
+                f_tt = ((f_pp - f_mp) + (f_mm - f_pm))*((FLOAT_PRECISION) 1/(4*e*e));
             }
             
             
@@ -194,23 +195,34 @@ SparseMatrix hessian_wL(StateVectors X, InputVectors U, TimeVector T, Time t0, T
             {
                 hessian.rows.push_back(i);
                 hessian.cols.push_back(j);
-                hessian.values.push_back(vec_sum(L_tt));
+                hessian.values.push_back(vec_sum(f_tt));
             } else if (j < 2)
             {
                 for (int k = 0; k < T.size(); k++)
                 {
+                    FLOAT_PRECISION totalPerturbF = 0.0;
+                    for (int h = 0; h < numState; h++)
+                    {
+                        totalPerturbF += f_tt[k*numState + h];
+                    }
+                    
                     hessian.rows.push_back(i+(rowSize-2)*k);
                     hessian.cols.push_back(j);
-                    hessian.values.push_back(L_tt[k]); /// DOUBLE CHEKC
+                    hessian.values.push_back(totalPerturbF); /// DOUBLE CHEKC
                 }
             }
             
             else {
                 for (int k = 0; k < T.size(); k++)
                 {
+                    FLOAT_PRECISION totalPerturbF = 0.0;
+                    for (int h = 0; h < numState; h++)
+                    {
+                        totalPerturbF += f_tt[k*numState + h];
+                    }
                     hessian.rows.push_back(i+(rowSize-2)*k);
                     hessian.cols.push_back(j+(rowSize-2)*k);
-                    hessian.values.push_back(L_tt[k]); /// DOUBLE CHEKC
+                    hessian.values.push_back(totalPerturbF); /// DOUBLE CHEKC
                 }
                                 
             }

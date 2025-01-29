@@ -5,6 +5,7 @@ Motivation: to test the functions written*/
 #include "gradientFD.h"
 #include "jacobian.h"
 #include "hessian_wL.h"
+#include "hessian_FG.h"
 #include <iostream>
 
 int main(void){
@@ -57,11 +58,14 @@ int main(void){
     }
 
 
-    SparseMatrix test = jacobianF(X,U,T,t0,tf,0.001, true);
+    // SparseMatrix test = jacobianF(X,U,T,t0,tf,0.001, true);
 
     SparseMatrix hess = hessian_wL(X,U,T,t0,tf,0.001);
     hess.printInfo();
     hess.printFull();
+
+    SparseMatrix hessF = hessian_FG(X,U,T,t0,tf,0.001, 2);
+    hessF.printFull();
 
     return 0;
 }

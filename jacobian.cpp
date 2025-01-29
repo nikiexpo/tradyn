@@ -4,7 +4,7 @@
 #include <iostream>
 
 
-SparseMatrix jacobianF(StateVectors X, InputVectors U, TimeVector T, Time t0, Time tf, Perturbation e, bool constraints){
+SparseMatrix jacobianF(StateVectors X, InputVectors U, TimeVector T, Time t0, Time tf, Perturbation e, int numStates, bool constraints){
     SparseMatrix jacobian;
 
     // d(dx/dt)_t0;
@@ -36,16 +36,16 @@ SparseMatrix jacobianF(StateVectors X, InputVectors U, TimeVector T, Time t0, Ti
 
     // std::cout << "\nlog check" << std::endl;
 
-    const Gradient jacDynamics_t0 = finiteDiff_jacF(X, U, X, U, pp_deltaT_t0, np_deltaT_t0, pp_T_t0, np_T_t0, e);
-    const Gradient jacDynamics_tf = finiteDiff_jacF(X, U, X, U, pp_deltaT_tf, np_deltaT_tf, pp_T_tf, np_T_tf, e);
+    const Gradient jacDynamics_t0 = finiteDiff_jacF(X, U, X, U, pp_deltaT_t0, np_deltaT_t0, pp_T_t0, np_T_t0, e, numStates);
+    const Gradient jacDynamics_tf = finiteDiff_jacF(X, U, X, U, pp_deltaT_tf, np_deltaT_tf, pp_T_tf, np_T_tf, e, numStates);
 
     Gradient jacConstraints_t0;
     Gradient jacConstraints_tf;
 
     if (constraints == true)
     {
-        jacConstraints_t0 = finiteDiff_jacG(X, U, X, U, pp_deltaT_t0, np_deltaT_t0, pp_T_t0, np_T_t0, e);
-        jacConstraints_tf = finiteDiff_jacG(X, U, X, U, pp_deltaT_tf, np_deltaT_tf, pp_T_tf, np_T_tf, e);
+        jacConstraints_t0 = finiteDiff_jacG(X, U, X, U, pp_deltaT_t0, np_deltaT_t0, pp_T_t0, np_T_t0, e, numStates);
+        jacConstraints_tf = finiteDiff_jacG(X, U, X, U, pp_deltaT_tf, np_deltaT_tf, pp_T_tf, np_T_tf, e, numStates);
     }
     
     
@@ -70,7 +70,7 @@ SparseMatrix jacobianF(StateVectors X, InputVectors U, TimeVector T, Time t0, Ti
             np_X[j][i] = np_X[j][i] - e;
         }
 
-        Gradient temp = finiteDiff_jacF(pp_X, U, np_X, U, deltaT, deltaT, T, T, e);
+        Gradient temp = finiteDiff_jacF(pp_X, U, np_X, U, deltaT, deltaT, T, T, e, 1); // for now 1 later change
 
         for (auto &&i : temp)
         {
@@ -78,7 +78,7 @@ SparseMatrix jacobianF(StateVectors X, InputVectors U, TimeVector T, Time t0, Ti
             // std::cout << i << std::endl;
         }
 
-        Gradient temp2 = finiteDiff_jacG(pp_X, U, np_X, U, deltaT, deltaT, T, T, e);
+        Gradient temp2 = finiteDiff_jacG(pp_X, U, np_X, U, deltaT, deltaT, T, T, e, 1); // for now 1 later change
         for (auto &&i : temp2)
         {
             jacConstraints_X.push_back(i);
@@ -108,14 +108,14 @@ SparseMatrix jacobianF(StateVectors X, InputVectors U, TimeVector T, Time t0, Ti
             np_U[j][i] = np_U[j][i] - e;
         }
 
-        Gradient temp = finiteDiff_jacF(X, pp_U, X, np_U, deltaT, deltaT, T, T, e);
+        Gradient temp = finiteDiff_jacF(X, pp_U, X, np_U, deltaT, deltaT, T, T, e, numStates);
         // std::cout << "Size of temp U : " << temp.size() << std::endl;
         for (auto &&i : temp)
         {
             jacDynamics_U.push_back(i);
         }
 
-        Gradient temp2 = finiteDiff_jacG(X, pp_U, X, np_U, deltaT, deltaT, T, T, e);
+        Gradient temp2 = finiteDiff_jacG(X, pp_U, X, np_U, deltaT, deltaT, T, T, e, numStates);
         for (auto &&i : temp2)
         {
             jacConstraints_U.push_back(i);
@@ -151,10 +151,10 @@ const Gradient finiteDiff_jacF(
     const StateVectors pp_X, const InputVectors pp_U,
     const StateVectors np_X, const InputVectors np_U,
     const Time pp_delta_T, const Time np_delta_T,
-    const TimeVector pp_T, const TimeVector np_T, Perturbation e
+    const TimeVector pp_T, const TimeVector np_T, Perturbation e, int numStates
 ){
-    const StateGradientVectors pp_dx = f_unscaled(pp_X, pp_U, pp_T);
-    const StateGradientVectors np_dx = f_unscaled(np_X, np_U, np_T); 
+    const StateGradientVectors pp_dx = f_unscaled(pp_X, pp_U, pp_T, numStates);
+    const StateGradientVectors np_dx = f_unscaled(np_X, np_U, np_T, numStates); 
     StateGradientVectors jacF;
     jacF.reserve(pp_dx.size());
 
@@ -162,7 +162,7 @@ const Gradient finiteDiff_jacF(
     // std::cout << "dx"
     std::cout << " LOG  CHECK !" << std::endl;
 
-    for (int  i = 0; i < pp_T.size(); i++)
+    for (int  i = 0; i < pp_T.size(); i++) // TODO: NO SHUFFLE NEEDED -- REMOVE THIS
     {
         for (int j = 0; j < pp_X[0].size(); j++)
         {
@@ -179,13 +179,13 @@ const Gradient finiteDiff_jacG(
     const StateVectors pp_X, const InputVectors pp_U,
     const StateVectors np_X, const InputVectors np_U,
     const Time pp_delta_T, const Time np_delta_T,
-    const TimeVector pp_T, const TimeVector np_T, Perturbation e
+    const TimeVector pp_T, const TimeVector np_T, Perturbation e, int numConstraints
 ){
     const ConstraintVector pp_g = g_unscaled(pp_X, pp_U, pp_T);
     const ConstraintVector np_g = g_unscaled(np_X, np_U, np_T);
     ConstraintVector jacG;
     // std::cout << "\nlog check" << std::endl;
-    for (int i = 0; i < pp_T.size(); i++)
+    for (int i = 0; i < pp_T.size(); i++) // TODO: NO SHUFFLE NEEDED -- REMOVE THIS
     {
         for (int j = 0; j < ((int) pp_g.size() / pp_T.size()); j++)
         {
